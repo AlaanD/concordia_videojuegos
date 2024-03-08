@@ -1,4 +1,4 @@
-import { Application, Sprite } from 'pixi.js'
+import { Application, Assets, Sprite } from 'pixi.js'
 
 const app = new Application<HTMLCanvasElement>({
 	view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
@@ -9,11 +9,20 @@ const app = new Application<HTMLCanvasElement>({
 	height: 480
 });
 
-const clampy: Sprite = Sprite.from("clampy.png");
+// Añade los activos para cargar
+Assets.add('myClampy', 'clampy.png');
 
-clampy.anchor.set(0.5);
+// Carga los activos y obtén una promesa resuelta una vez que se cargue
+const texturesPromise = Assets.load(['myClampy']);
 
-clampy.x = app.screen.width / 2;
-clampy.y = app.screen.height / 2;
+// Cuando la promesa se resuelva, ¡tendrás la textura!
+texturesPromise.then((textures) => {
+  const clampy = Sprite.from(textures.myClampy);
+  clampy.anchor.set(0.5);
+  clampy.x = app.screen.width / 2;
+  clampy.y = app.screen.height / 2;
 
-app.stage.addChild(clampy);
+  app.stage.addChild(clampy);
+
+  console.log("Hola mundo!", clampy.width, clampy.height);
+});
